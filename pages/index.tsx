@@ -19,12 +19,14 @@ export default function Home() {
   };
 
   const handlePlayText = async (voiceId: string) => {
+    console.log(voiceId)
     const response = await fetch('/api/audio', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, voiceId }),
     });
     const data = await response.json();
+    console.log(data.url)
     const audio = new Audio(data.url);  // Usa o URL do blob
     audio.play();
   };
@@ -51,7 +53,7 @@ export default function Home() {
             </button>
             <button
               className="button"
-              onClick={() => handlePlayText(voice.id)}
+              onClick={() => handlePlayText(voice.voice_id)}
             >
               Play Text
             </button>
