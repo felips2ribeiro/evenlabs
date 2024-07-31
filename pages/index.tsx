@@ -18,7 +18,6 @@ export default function Home() {
     const audio = new Audio(previewUrl);
     audio.play();
   };
-  
 
   const handlePlayText = async (voiceId: string) => {
     const response = await fetch('/api/audio', {
@@ -27,33 +26,32 @@ export default function Home() {
       body: JSON.stringify({ text, voiceId }),
     });
     const data = await response.json();
-    console.log(data.filePath)
-    const audio = new Audio("tmp/audio-1722442920751.mp3");
+    const audio = new Audio(data.filePath);
     audio.play();
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Text to Speech</h1>
+    <div className="container">
+      <h1 className="title">Text to Speech</h1>
       <textarea
+        className="textarea"
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Digite seu texto aqui..."
-        style={styles.textarea}
       />
-      <div style={styles.voiceList}>
+      <div className="voiceList">
         {voices.map((voice) => (
-          <div key={voice.id} style={styles.voiceItem}>
-            <h2 style={styles.voiceName}>{voice.name}</h2>
-            <p style={styles.voiceDescription}>{voice.description}</p>
+          <div key={voice.id} className="voiceItem">
+            <h2 className="voiceName">{voice.name}</h2>
+            <p className="voiceDescription">{voice.description}</p>
             <button
-              style={styles.button}
+              className="button"
               onClick={() => playVoiceSample(voice.preview_url)}
             >
               Play Sample
             </button>
             <button
-              style={styles.button}
+              className="button"
               onClick={() => handlePlayText(voice.id)}
             >
               Play Text
@@ -64,50 +62,3 @@ export default function Home() {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: '20px',
-  },
-  textarea: {
-    width: '100%',
-    height: '100px',
-    marginBottom: '20px',
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    boxSizing: 'border-box',
-  },
-  voiceList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-  },
-  voiceItem: {
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ddd',
-    backgroundColor: '#f9f9f9',
-  },
-  voiceName: {
-    margin: '0',
-  },
-  voiceDescription: {
-    margin: '5px 0',
-  },
-  button: {
-    marginRight: '10px',
-    padding: '10px 20px',
-    fontSize: '16px',
-    border: 'none',
-    borderRadius: '5px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    cursor: 'pointer',
-  },
-};

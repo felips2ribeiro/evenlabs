@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const audioBuffer = await response.arrayBuffer();
-  const filePath = `./tmp/audio-${Date.now()}.mp3`;
+  const filePath = `.public/tmp/audio-${Date.now()}.mp3`;
   await writeFileAsync(filePath, new Uint8Array(audioBuffer));
 
   res.status(200).json({ filePath });
