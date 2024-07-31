@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [voices, setVoices] = useState<any[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [text, setText] = useState('');
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function Home() {
       body: JSON.stringify({ text, voiceId }),
     });
     const data = await response.json();
-    const audio = new Audio(data.filePath);
+    const audio = new Audio(data.url);  // Usa o URL do blob
     audio.play();
   };
 

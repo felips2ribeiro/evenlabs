@@ -1,11 +1,11 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { writeFile } from 'fs';
-import { promisify } from 'util';
+import { NextRequest, NextResponse } from 'next/server';
+import { put } from '@vercel/blob';
 
-const writeFileAsync = promisify(writeFile);
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { text, voiceId } = req.body;
+// Handler para o upload de áudio
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  const { text, voiceId } = await request.json();
+  
+  // Faça a solicitação para o serviço de texto-para-fala
   const response = await fetch(`https://api.elevenlabs.io/v1/voices/${voiceId}/synthesize`, {
     method: 'POST',
     headers: {
@@ -16,8 +16,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const audioBuffer = await response.arrayBuffer();
-  const filePath = `.public/tmp/audio-${Date.now()}.mp3`;
-  await writeFileAsync(filePath, new Uint8Array(audioBuffer));
+  const fileName = `audio-${Date.now()}.mp3`;
 
-  res.status(200).json({ filePath });
+  // Faça o upload para o Vercel Blob
+  const blob = await put(fileName, new Uint8Array(audioBuffer), { access: 'public' });
+
+  return NextResponse.json(blob);
 }
+
+// A configuração abaixo é necessária para rotas da API do Pages
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
