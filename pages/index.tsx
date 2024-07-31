@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Button, Loader, Textarea, Container, Title, Group, Paper } from '@mantine/core'; // Mantine components
 
-const VoiceLabels = ({ labels }) => {
+interface Labels {
+  [key: string]: string
+}
+
+interface AudioPlayerProps{
+  previewUrl: string;
+}
+
+const VoiceLabels = ({ labels }: {labels: Labels}) => {
   const labelKeys = Object.keys(labels).sort();
 
   return (
@@ -15,21 +23,36 @@ const VoiceLabels = ({ labels }) => {
   );
 };
 
-const AudioPlayer = ({ previewUrl }) => {
+const AudioPlayer = ({ previewUrl }: AudioPlayerProps) => {
   const [playing, setPlaying] = useState(false);
-  const [audio, setAudio] = useState(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    setAudio(new Audio(previewUrl));
+    const audioElement = new Audio(previewUrl);
+    setAudio(audioElement);
+
+    return () => {
+      // Limpar o áudio quando o componente desmontar ou o previewUrl mudar
+      audioElement.pause();
+      audioElement.currentTime = 0;
+    };
   }, [previewUrl]);
 
-  const handlePlayPause = () => {
-    if (playing) {
-      audio.pause();
-    } else {
-      audio.play();
+  useEffect(() => {
+    if (audio) {
+      playing ? audio.play() : audio.pause();
     }
-    setPlaying(!playing);
+  }, [playing, audio]);
+
+  const handlePlayPause = () => {
+    if (audio) {
+      if (playing) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      setPlaying(!playing);
+    }
   };
 
   return (
@@ -40,6 +63,7 @@ const AudioPlayer = ({ previewUrl }) => {
     </div>
   );
 };
+
 
 export default function Home() {
   const [voices, setVoices] = useState<any[]>([]);
@@ -103,7 +127,7 @@ export default function Home() {
               <p><strong>Category: </strong>{voice.category}</p>
               <VoiceLabels labels={voice.labels} />
               <p>{voice.description}</p>
-              <Group spacing="md">
+              <Group>
                 <AudioPlayer previewUrl={voice.preview_url} />
                 <Button
                   onClick={() => handlePlayText(voice.voice_id)}
