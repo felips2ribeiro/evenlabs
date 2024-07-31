@@ -109,7 +109,7 @@ export default function Home() {
 
   return (
     <Container>
-      <Title mt={20} order={1}>Texto Para ser Escrito</Title>
+      <Title mt={20} order={1}>Text to Speech</Title>
       <Paper shadow="xs">
         <Textarea
           value={text}
