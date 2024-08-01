@@ -15,7 +15,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'xi-api-key': `sk_421db8e3bca06bcf8251dd9c80d8a099424c498dbaa16c4b`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({
+         text: text, 
+         model_id: 'eleven_multilingual_v2'
+      }),
     });
 
 
